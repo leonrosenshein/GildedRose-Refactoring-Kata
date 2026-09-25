@@ -1,10 +1,14 @@
 package gildedrose
 
+import "slices"
+
 const (
 	agedBrie        = "Aged Brie"
 	backstagePasses = "Backstage passes to a TAFKAL80ETC concert"
 	sulfuras        = "Sulfuras, Hand of Ragnaros"
 )
+
+var specialItems = []string{agedBrie, backstagePasses, sulfuras}
 
 type Item struct {
 	Name            string
@@ -14,13 +18,7 @@ type Item struct {
 func UpdateQuality(items []*Item) {
 	for _, item := range items {
 
-		if item.Name != agedBrie && item.Name != backstagePasses {
-			if item.Quality > 0 {
-				if item.Name != sulfuras {
-					item.Quality = item.Quality - 1
-				}
-			}
-		} else {
+		if slices.Contains(specialItems, item.Name) {
 			if item.Quality < 50 {
 				item.Quality = item.Quality + 1
 				if item.Name == backstagePasses {
@@ -34,6 +32,12 @@ func UpdateQuality(items []*Item) {
 							item.Quality = item.Quality + 1
 						}
 					}
+				}
+			}
+		} else {
+			if item.Quality > 0 {
+				if item.Name != sulfuras {
+					item.Quality = item.Quality - 1
 				}
 			}
 		}
