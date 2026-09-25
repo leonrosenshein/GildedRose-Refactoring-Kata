@@ -19,18 +19,14 @@ func UpdateQuality(items []*Item) {
 	for _, item := range items {
 
 		if slices.Contains(specialItems, item.Name) {
-			if item.Quality < 50 {
+			if item.Name != sulfuras {
 				item.Quality = item.Quality + 1
 				if item.Name == backstagePasses {
 					if item.SellIn < 11 {
-						if item.Quality < 50 {
-							item.Quality = item.Quality + 1
-						}
+						item.Quality = item.Quality + 1
 					}
 					if item.SellIn < 6 {
-						if item.Quality < 50 {
-							item.Quality = item.Quality + 1
-						}
+						item.Quality = item.Quality + 1
 					}
 				}
 			}
@@ -56,10 +52,12 @@ func UpdateQuality(items []*Item) {
 					item.Quality = item.Quality - item.Quality
 				}
 			} else {
-				if item.Quality < 50 {
-					item.Quality = item.Quality + 1
-				}
+				item.Quality = item.Quality + 1
 			}
+		}
+
+		if item.Name != sulfuras && item.Quality > 50 {
+			item.Quality = 50
 		}
 	}
 
