@@ -15,24 +15,45 @@ type Item struct {
 	SellIn, Quality int
 }
 
+func itemNoOp(item *Item) {
+}
+
+func incrementQualityByOne(item *Item) {
+	item.Quality++
+}
+
+func decrementQualityByOne(item *Item) {
+	item.Quality--
+}
+
+func clampQuality(item *Item) {
+	item.Quality = max(0, min(50, item.Quality))
+}
+
+func updateBackstagePassQuality(item *Item) {
+	item.Quality++
+	if item.SellIn < 11 {
+		item.Quality++
+	}
+	if item.SellIn < 6 {
+		item.Quality++
+	}
+}
+
+var qualityHandlerMap = map[string]func(item *Item){
+	agedBrie:        incrementQualityByOne,
+	backstagePasses: updateBackstagePassQuality,
+	sulfuras:        itemNoOp,
+}
+
 func UpdateQuality(items []*Item) {
 	for _, item := range items {
 
-		if slices.Contains(specialItems, item.Name) {
-			if item.Name != sulfuras {
-				item.Quality = item.Quality + 1
-				if item.Name == backstagePasses {
-					if item.SellIn < 11 {
-						item.Quality = item.Quality + 1
-					}
-					if item.SellIn < 6 {
-						item.Quality = item.Quality + 1
-					}
-				}
-			}
-		} else {
-			item.Quality = item.Quality - 1
+		qualityOp, found := qualityHandlerMap[item.Name]
+		if !found {
+			qualityOp = decrementQualityByOne
 		}
+		qualityOp(item)
 
 		if item.Name != sulfuras {
 			item.SellIn = item.SellIn - 1
@@ -51,7 +72,7 @@ func UpdateQuality(items []*Item) {
 			}
 		}
 
-		item.Quality = max(0, min(50, item.Quality))
+		clampQuality(item)
 	}
 
 }
