@@ -33,8 +33,8 @@ func Test_UpdateQuality(t *testing.T) {
 			{Item: &gildedrose.Item{Name: agedBrie, SellIn: 0, Quality: 49}, nextSellIn: -1, nextQuality: 50},
 		},
 		"sulfuras": {
-			{Item: &gildedrose.Item{Name: sulfuras, SellIn: 5, Quality: 80}, nextSellIn: 5, nextQuality: 80},
-			{Item: &gildedrose.Item{Name: sulfuras, SellIn: -1, Quality: 80}, nextSellIn: -1, nextQuality: 80},
+			{Item: &gildedrose.Item{Name: sulfuras, SellIn: 5, Quality: 50}, nextSellIn: 5, nextQuality: 50},
+			{Item: &gildedrose.Item{Name: sulfuras, SellIn: -1, Quality: 10}, nextSellIn: -1, nextQuality: 10},
 		},
 		"backstage passes": {
 			{Item: &gildedrose.Item{Name: backstagePasses, SellIn: 11, Quality: 20}, nextSellIn: 10, nextQuality: 21},
