@@ -39,16 +39,15 @@ func UpdateQuality(items []*Item) {
 		}
 
 		if item.SellIn < 0 {
-			if item.Name != agedBrie {
-				if item.Name != backstagePasses {
-					if item.Name != sulfuras {
-						item.Quality = item.Quality - 1
-					}
-				} else {
-					item.Quality = item.Quality - item.Quality
+			if slices.Contains(specialItems, item.Name) {
+				if item.Name == agedBrie {
+					item.Quality = item.Quality + 1
+				}
+				if item.Name == backstagePasses {
+					item.Quality = 0
 				}
 			} else {
-				item.Quality = item.Quality + 1
+				item.Quality = item.Quality - 1
 			}
 		}
 
