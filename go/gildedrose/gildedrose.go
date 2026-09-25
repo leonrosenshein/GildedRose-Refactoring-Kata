@@ -31,9 +31,7 @@ func UpdateQuality(items []*Item) {
 				}
 			}
 		} else {
-			if item.Quality > 0 {
-				item.Quality = item.Quality - 1
-			}
+			item.Quality = item.Quality - 1
 		}
 
 		if item.Name != sulfuras {
@@ -43,10 +41,8 @@ func UpdateQuality(items []*Item) {
 		if item.SellIn < 0 {
 			if item.Name != agedBrie {
 				if item.Name != backstagePasses {
-					if item.Quality > 0 {
-						if item.Name != sulfuras {
-							item.Quality = item.Quality - 1
-						}
+					if item.Name != sulfuras {
+						item.Quality = item.Quality - 1
 					}
 				} else {
 					item.Quality = item.Quality - item.Quality
@@ -56,9 +52,7 @@ func UpdateQuality(items []*Item) {
 			}
 		}
 
-		if item.Quality > 50 {
-			item.Quality = 50
-		}
+		item.Quality = max(0, min(50, item.Quality))
 	}
 
 }
