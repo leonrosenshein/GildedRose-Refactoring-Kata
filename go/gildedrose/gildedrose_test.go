@@ -10,6 +10,7 @@ const (
 	agedBrie        = "Aged Brie"
 	backstagePasses = "Backstage passes to a TAFKAL80ETC concert"
 	sulfuras        = "Sulfuras, Hand of Ragnaros"
+	conjured        = "Conjured Mana Cake"
 )
 
 func Test_UpdateQuality(t *testing.T) {
@@ -33,7 +34,7 @@ func Test_UpdateQuality(t *testing.T) {
 			{Item: &gildedrose.Item{Name: agedBrie, SellIn: 0, Quality: 49}, nextSellIn: -1, nextQuality: 50},
 		},
 		"sulfuras": {
-			{Item: &gildedrose.Item{Name: sulfuras, SellIn: 5, Quality: 50}, nextSellIn: 5, nextQuality: 50},
+			{Item: &gildedrose.Item{Name: sulfuras, SellIn: 5, Quality: 80}, nextSellIn: 5, nextQuality: 80},
 			{Item: &gildedrose.Item{Name: sulfuras, SellIn: -1, Quality: 10}, nextSellIn: -1, nextQuality: 10},
 		},
 		"backstage passes": {
@@ -45,6 +46,15 @@ func Test_UpdateQuality(t *testing.T) {
 			{Item: &gildedrose.Item{Name: backstagePasses, SellIn: 0, Quality: 20}, nextSellIn: -1, nextQuality: 0},
 			{Item: &gildedrose.Item{Name: backstagePasses, SellIn: 10, Quality: 49}, nextSellIn: 9, nextQuality: 50},
 			{Item: &gildedrose.Item{Name: backstagePasses, SellIn: 5, Quality: 48}, nextSellIn: 4, nextQuality: 50},
+		},
+		"conjured": {
+			{Item: &gildedrose.Item{Name: conjured, SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 8},
+			{Item: &gildedrose.Item{Name: conjured, SellIn: 1, Quality: 10}, nextSellIn: 0, nextQuality: 8},
+			{Item: &gildedrose.Item{Name: conjured, SellIn: 0, Quality: 10}, nextSellIn: -1, nextQuality: 6},
+			{Item: &gildedrose.Item{Name: conjured, SellIn: -5, Quality: 10}, nextSellIn: -6, nextQuality: 6},
+			{Item: &gildedrose.Item{Name: conjured, SellIn: 5, Quality: 1}, nextSellIn: 4, nextQuality: 0},
+			{Item: &gildedrose.Item{Name: conjured, SellIn: 0, Quality: 3}, nextSellIn: -1, nextQuality: 0},
+			{Item: &gildedrose.Item{Name: conjured, SellIn: 0, Quality: 0}, nextSellIn: -1, nextQuality: 0},
 		},
 	}
 

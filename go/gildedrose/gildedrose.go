@@ -1,14 +1,11 @@
 package gildedrose
 
-import "slices"
-
 const (
 	agedBrie        = "Aged Brie"
 	backstagePasses = "Backstage passes to a TAFKAL80ETC concert"
 	sulfuras        = "Sulfuras, Hand of Ragnaros"
+	conjured        = "Conjured Mana Cake"
 )
-
-var specialItems = []string{agedBrie, backstagePasses, sulfuras}
 
 type Item struct {
 	Name            string
@@ -22,11 +19,19 @@ func incrementQualityByOne(item *Item) {
 	item.Quality++
 }
 
+func zeroQuality(item *Item) {
+	item.Quality = 0
+}
+
 func decrementQualityByOne(item *Item) {
 	item.Quality--
 }
 
-func clampQuality(item *Item) {
+func decrementQualityByTwo(item *Item) {
+	item.Quality -= 2
+}
+
+func clampQualityZeroToFifty(item *Item) {
 	item.Quality = max(0, min(50, item.Quality))
 }
 
@@ -42,7 +47,15 @@ func updateBackstagePassQuality(item *Item) {
 
 var qualityHandlerMap = map[string]func(item *Item){
 	agedBrie:        incrementQualityByOne,
+	conjured:        decrementQualityByTwo,
 	backstagePasses: updateBackstagePassQuality,
+	sulfuras:        itemNoOp,
+}
+
+var postSellInHandlerMap = map[string]func(item *Item){
+	agedBrie:        incrementQualityByOne,
+	conjured:        decrementQualityByTwo,
+	backstagePasses: zeroQuality,
 	sulfuras:        itemNoOp,
 }
 
@@ -51,6 +64,10 @@ func decrementSellInByOne(item *Item) {
 }
 
 var sellInHandlerMap = map[string]func(item *Item){
+	sulfuras: itemNoOp,
+}
+
+var clampMap = map[string]func(item *Item){
 	sulfuras: itemNoOp,
 }
 
@@ -70,19 +87,18 @@ func UpdateQuality(items []*Item) {
 		sellInOp(item)
 
 		if item.SellIn < 0 {
-			if slices.Contains(specialItems, item.Name) {
-				if item.Name == agedBrie {
-					item.Quality = item.Quality + 1
-				}
-				if item.Name == backstagePasses {
-					item.Quality = 0
-				}
-			} else {
-				item.Quality = item.Quality - 1
+			postSellInQualityOp, found := postSellInHandlerMap[item.Name]
+			if !found {
+				postSellInQualityOp = decrementQualityByOne
 			}
+			postSellInQualityOp(item)
 		}
 
-		clampQuality(item)
+		clampOp, found := clampMap[item.Name]
+		if !found {
+			clampOp = clampQualityZeroToFifty
+		}
+		clampOp(item)
 	}
 
 }
