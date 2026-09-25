@@ -56,7 +56,7 @@ func UpdateQuality(items []*Item) {
 			}
 		}
 
-		if item.Name != sulfuras && item.Quality > 50 {
+		if item.Quality > 50 {
 			item.Quality = 50
 		}
 	}
