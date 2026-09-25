@@ -36,9 +36,7 @@ func UpdateQuality(items []*Item) {
 			}
 		} else {
 			if item.Quality > 0 {
-				if item.Name != sulfuras {
-					item.Quality = item.Quality - 1
-				}
+				item.Quality = item.Quality - 1
 			}
 		}
 
