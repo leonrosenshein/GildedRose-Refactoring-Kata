@@ -46,6 +46,14 @@ var qualityHandlerMap = map[string]func(item *Item){
 	sulfuras:        itemNoOp,
 }
 
+func decrementSellInByOne(item *Item) {
+	item.SellIn--
+}
+
+var sellInHandlerMap = map[string]func(item *Item){
+	sulfuras: itemNoOp,
+}
+
 func UpdateQuality(items []*Item) {
 	for _, item := range items {
 
@@ -55,9 +63,11 @@ func UpdateQuality(items []*Item) {
 		}
 		qualityOp(item)
 
-		if item.Name != sulfuras {
-			item.SellIn = item.SellIn - 1
+		sellInOp, found := sellInHandlerMap[item.Name]
+		if !found {
+			sellInOp = decrementSellInByOne
 		}
+		sellInOp(item)
 
 		if item.SellIn < 0 {
 			if slices.Contains(specialItems, item.Name) {
