@@ -56,6 +56,27 @@ func Test_UpdateQuality(t *testing.T) {
 			{Item: &gildedrose.Item{Name: conjured, SellIn: 0, Quality: 3}, nextSellIn: -1, nextQuality: 0},
 			{Item: &gildedrose.Item{Name: conjured, SellIn: 0, Quality: 0}, nextSellIn: -1, nextQuality: 0},
 		},
+		"other backstage passes": {
+			{Item: &gildedrose.Item{Name: "Backstage passes to a Rush concert", SellIn: 11, Quality: 20}, nextSellIn: 10, nextQuality: 21},
+			{Item: &gildedrose.Item{Name: "Backstage passes for the opera", SellIn: 5, Quality: 20}, nextSellIn: 4, nextQuality: 23},
+			{Item: &gildedrose.Item{Name: "Backstage passes x", SellIn: 0, Quality: 20}, nextSellIn: -1, nextQuality: 0},
+		},
+		"other conjured": {
+			{Item: &gildedrose.Item{Name: "Conjured Aged Brie", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 8},
+			{Item: &gildedrose.Item{Name: "Conjured Elixir", SellIn: 0, Quality: 10}, nextSellIn: -1, nextQuality: 6},
+		},
+		"near misses are normal": {
+			{Item: &gildedrose.Item{Name: "Aged Brie 2", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "Old Aged Brie", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "aged brie", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "Backstage passes", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "VIP Backstage passes to a concert", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "Sulfuras, Hand of Ragnaros replica", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "Sulfuras", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "Conjured", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "Unconjured Mana Cake", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+			{Item: &gildedrose.Item{Name: "sulfuras", SellIn: 5, Quality: 10}, nextSellIn: 4, nextQuality: 9},
+		},
 	}
 
 	for name, test := range tests {

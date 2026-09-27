@@ -1,11 +1,32 @@
 package gildedrose
 
+import "regexp"
+
 const (
-	agedBrie        = "Aged Brie"
-	backstagePasses = "Backstage passes to a TAFKAL80ETC concert"
-	sulfuras        = "Sulfuras, Hand of Ragnaros"
-	conjured        = "Conjured Mana Cake"
+	agedBrie        = "agedBrie"
+	backstagePasses = "backstagePasses"
+	sulfuras        = "sulfuras"
+	conjured        = "conjured"
 )
+
+var itemCategoryMatchers = []struct {
+	pattern  *regexp.Regexp
+	category string
+}{
+	{regexp.MustCompile(`^Aged Brie$`), agedBrie},
+	{regexp.MustCompile(`^Backstage passes `), backstagePasses},
+	{regexp.MustCompile(`^Sulfuras, Hand of Ragnaros$`), sulfuras},
+	{regexp.MustCompile(`^Conjured `), conjured},
+}
+
+func itemCategory(name string) string {
+	for _, m := range itemCategoryMatchers {
+		if m.pattern.MatchString(name) {
+			return m.category
+		}
+	}
+	return ""
+}
 
 type Item struct {
 	Name            string
@@ -73,28 +94,29 @@ var clampMap = map[string]func(item *Item){
 
 func UpdateQuality(items []*Item) {
 	for _, item := range items {
+		category := itemCategory(item.Name)
 
-		qualityOp, found := qualityHandlerMap[item.Name]
+		qualityOp, found := qualityHandlerMap[category]
 		if !found {
 			qualityOp = decrementQualityByOne
 		}
 		qualityOp(item)
 
-		sellInOp, found := sellInHandlerMap[item.Name]
+		sellInOp, found := sellInHandlerMap[category]
 		if !found {
 			sellInOp = decrementSellInByOne
 		}
 		sellInOp(item)
 
 		if item.SellIn < 0 {
-			postSellInQualityOp, found := postSellInHandlerMap[item.Name]
+			postSellInQualityOp, found := postSellInHandlerMap[category]
 			if !found {
 				postSellInQualityOp = decrementQualityByOne
 			}
 			postSellInQualityOp(item)
 		}
 
-		clampOp, found := clampMap[item.Name]
+		clampOp, found := clampMap[category]
 		if !found {
 			clampOp = clampQualityZeroToFifty
 		}
