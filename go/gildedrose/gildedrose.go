@@ -28,6 +28,22 @@ func itemCategory(name string) string {
 	return ""
 }
 
+// GetOrDefaulter is implemented by map-like types that can return a fallback
+// value for missing keys.
+type GetOrDefaulter[K comparable, V any] interface {
+	GetOrDefault(key K, defaultValue V) V
+}
+
+// Map extends the builtin map with GetOrDefault.
+type Map[K comparable, V any] map[K]V
+
+func (m Map[K, V]) GetOrDefault(key K, defaultValue V) V {
+	if v, found := m[key]; found {
+		return v
+	}
+	return defaultValue
+}
+
 type Item struct {
 	Name            string
 	SellIn, Quality int
@@ -66,14 +82,14 @@ func updateBackstagePassQuality(item *Item) {
 	}
 }
 
-var qualityHandlerMap = map[string]func(item *Item){
+var qualityHandlerMap = Map[string, func(item *Item)]{
 	agedBrie:        incrementQualityByOne,
 	conjured:        decrementQualityByTwo,
 	backstagePasses: updateBackstagePassQuality,
 	sulfuras:        itemNoOp,
 }
 
-var postSellInHandlerMap = map[string]func(item *Item){
+var postSellInHandlerMap = Map[string, func(item *Item)]{
 	agedBrie:        incrementQualityByOne,
 	conjured:        decrementQualityByTwo,
 	backstagePasses: zeroQuality,
@@ -84,11 +100,11 @@ func decrementSellInByOne(item *Item) {
 	item.SellIn--
 }
 
-var sellInHandlerMap = map[string]func(item *Item){
+var sellInHandlerMap = Map[string, func(item *Item)]{
 	sulfuras: itemNoOp,
 }
 
-var clampMap = map[string]func(item *Item){
+var clampMap = Map[string, func(item *Item)]{
 	sulfuras: itemNoOp,
 }
 
@@ -96,31 +112,15 @@ func UpdateQuality(items []*Item) {
 	for _, item := range items {
 		category := itemCategory(item.Name)
 
-		qualityOp, found := qualityHandlerMap[category]
-		if !found {
-			qualityOp = decrementQualityByOne
-		}
-		qualityOp(item)
+		qualityHandlerMap.GetOrDefault(category, decrementQualityByOne)(item)
 
-		sellInOp, found := sellInHandlerMap[category]
-		if !found {
-			sellInOp = decrementSellInByOne
-		}
-		sellInOp(item)
+		sellInHandlerMap.GetOrDefault(category, decrementSellInByOne)(item)
 
 		if item.SellIn < 0 {
-			postSellInQualityOp, found := postSellInHandlerMap[category]
-			if !found {
-				postSellInQualityOp = decrementQualityByOne
-			}
-			postSellInQualityOp(item)
+			postSellInHandlerMap.GetOrDefault(category, decrementQualityByOne)(item)
 		}
 
-		clampOp, found := clampMap[category]
-		if !found {
-			clampOp = clampQualityZeroToFifty
-		}
-		clampOp(item)
+		clampMap.GetOrDefault(category, clampQualityZeroToFifty)(item)
 	}
 
 }
